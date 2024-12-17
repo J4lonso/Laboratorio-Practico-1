@@ -43,6 +43,7 @@ def analisis_de_registros(registro_sistema): #alonso
     
     
 def Deteccion_de_vulnerabilidades():# marco
+    adsd = 0
     print()
     
     
