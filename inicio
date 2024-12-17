@@ -1,9 +1,43 @@
+
+
+import re
+
+
+
 def monitoreo_de_red():
     print("Bienvenido al modulo para monitorear la red.")
     
+
     
-def analisis_de_registros():
-    print()
+def analisis_de_registros(registro_sistema):
+    print("----------------------------analizando eventos del sistema -----------------------------")
+    
+        # Desarrolla scripts en PY que analicen los registros del sistema en busca de eventos 
+    # anomalos o patrones de comportamiento sospechoso que puedan un ataque en curso
+    
+    with open(registro_sistema, "r") as file:
+        # se abre el archivo a analizar, en este caso el de logs
+        registros = file.readlines()
+        # exprexiones regulares a buscar
+        expreciones_reg = [
+            #tener en cuenta el idioma del sistema, en mi caso esta en espanol
+            
+            r"Contrasena fallida", 
+            
+            
+            
+        ]
+        
+        patrones = [re.compile(expreciones, re.IGNORECASE) for expreciones in expreciones_reg]# se compilan las expreciones regulares, para su busqueda
+        
+        sospechos = []# almacena lo que se encuentra
+        for linea_texto in registros:
+            for patron in patrones:# se analiza el documentos en busca 
+                if patron.search(linea_texto):# de las palabras claves
+                    sospechos.append(linea_texto)## guarda 
+                    break
+        return sospechos# retorna
+    
     
     
 def Deteccion_de_vulnerabilidades():
@@ -32,7 +66,7 @@ def Informes_seguridad():
 def menu():
     print("Seleccione el numero que desea realizar!\n")
     print("1. Monitorear red\n")
-    print("2. analisis de registros \n")
+    print("2. Analisis de registros \n")
     print("3. Detectar Vulnerabilidades\n" )
     print("4. Salir\n")
 
