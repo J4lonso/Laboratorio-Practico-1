@@ -4,12 +4,14 @@ import re
 
 
 
-def monitoreo_de_red():
+def monitoreo_de_red():  # mauricio
     print("Bienvenido al modulo para monitorear la red.")
     
 
     
-def analisis_de_registros(registro_sistema):
+def analisis_de_registros(registro_sistema): #alonso
+    
+    
     print("----------------------------analizando eventos del sistema -----------------------------")
     
         # Desarrolla scripts en PY que analicen los registros del sistema en busca de eventos 
@@ -40,30 +42,36 @@ def analisis_de_registros(registro_sistema):
     
     
     
-def Deteccion_de_vulnerabilidades():
+def Deteccion_de_vulnerabilidades():# marco
     print()
     
     
-def Prevencion_de_ataques():
+def Prevencion_de_ataques():#alonso
+    print()
+    
+    #desarrolla un modulo en PY que analice el trafico web entrante y saliente 
+    #para detectar posibles amenazas, como inyecciones SQL, XSS, o ataques de fuerza bruta
+
+def analisis_de_trafico_web():#mauricio
+    print()
+    patrones_sql = []
+    
+    
+    
+def alertas(): # mauricio
     print()
     
     
-def analisis_de_trafico_web():
+def Registro_incidentes(): #marco
     print()
     
     
-def alertas():
-    print()
-    
-    
-def Registro_incidentes():
-    print()
-    
-    
-def Informes_seguridad():
+def Informes_seguridad(): #marco
     print()
 
-def menu():
+
+
+def menu(): #alonso
     print("Seleccione el numero que desea realizar!\n")
     print("1. Monitorear red\n")
     print("2. Analisis de registros \n")
