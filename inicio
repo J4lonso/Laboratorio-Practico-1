@@ -1,0 +1,71 @@
+def monitoreo_de_red():
+    print("Bienvenido al modulo para monitorear la red.")
+    
+    
+def analisis_de_registros():
+    print()
+    
+    
+def Deteccion_de_vulnerabilidades():
+    print()
+    
+    
+def Prevencion_de_ataques():
+    print()
+    
+    
+def analisis_de_trafico_web():
+    print()
+    
+    
+def alertas():
+    print()
+    
+    
+def Registro_incidentes():
+    print()
+    
+    
+def Informes_seguridad():
+    print()
+
+def menu():
+    print("Seleccione el numero que desea realizar!\n")
+    print("1. Monitorear red\n")
+    print("2. analisis de registros \n")
+    print("3. Detectar Vulnerabilidades\n" )
+    print("4. Salir\n")
+
+def main():
+    while True:
+        menu()
+        try:
+            opcion = int(input("Cual seria su seleccion?\n"))
+
+            if opcion == 1:
+
+                print()                                                         
+                                                                                                
+            elif opcion == 2:
+
+                print()                                                
+                                                                                                                                                         
+            elif opcion == 3:
+
+                print()                                                               
+
+            elif opcion == 4:
+                print("Cerrando programa!")
+                break
+            else: 
+                print("Ingrese un numero dentro de las opciones")
+
+            input("\nPresione Enter para volver al menú...")
+        except ValueError:
+            print("Por favor, ingrese un número válido.")
+
+    
+
+
+if __name__== "__main__":
+    main()
