@@ -22,7 +22,7 @@ def analisis_de_registros(registro_sistema): #alonso
         registros = file.readlines()
         # exprexiones regulares a buscar
         expreciones_reg = [
-            #tener en cuenta el idioma del sistema, en mi caso esta en espanol
+            #tener en cuenta el idioma del sistema, en mi caso esta en espanolss
             
             r"Contrasena fallida", 
             
