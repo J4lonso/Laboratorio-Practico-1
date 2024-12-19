@@ -1,11 +1,29 @@
 
 
 import re
+import os
+import socket
+import hashlib
+import time
+import threading
+from scapy.all import sniff, IP, TCP
+from datetime import datetime
+from cryptography.fernet import Fernet
+import psutil
+import logging
 
 
 
-def monitoreo_de_red():  # mauricio
-    print("Bienvenido al modulo para monitorear la red.")
+def monitoreo_de_red():  # Mauricio
+    print("Bienvenido al módulo para monitorear la red.")
+    print("Monitoreando tráfico de red...")
+    def packet_callback(packet):
+        if packet.haslayer(IP):
+            ip_src = packet[IP].src
+            ip_dst = packet[IP].dst
+            if packet.haslayer(TCP):
+                print(f"¡Peligro! Tráfico TCP sospechoso: {ip_src} -> {ip_dst}")
+    sniff(filter="tcp", prn=packet_callback, store=0)
     
 
     
@@ -85,8 +103,8 @@ def main():
             opcion = int(input("Cual seria su seleccion?\n"))
 
             if opcion == 1:
-
-                print()                                                         
+              monitoreo_de_red()
+              print()                                                         
                                                                                                 
             elif opcion == 2:
 
