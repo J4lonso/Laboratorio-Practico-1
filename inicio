@@ -70,9 +70,25 @@ def Prevencion_de_ataques():#alonso
     #desarrolla un modulo en PY que analice el trafico web entrante y saliente 
     #para detectar posibles amenazas, como inyecciones SQL, XSS, o ataques de fuerza bruta
 
-def analisis_de_trafico_web():#mauricio
-    print()
-    patrones_sql = []
+
+# Almacenamiento de alertas
+ALERTS = []
+
+def analisis_de_trafico_web(): #Mauricio
+    """Analiza el tráfico web entrante y saliente en busca de amenazas como SQLi y XSS."""
+    print("[INFO] Analizando tráfico web para detectar amenazas...")
+    patrones_sql = ["SELECT", "DROP", "INSERT", "UPDATE", "DELETE"]
+    patrones_xss = ["<script>", "javascript:", "onerror"]
+
+    def packet_callback(packet):
+        if packet.haslayer(TCP) and packet.haslayer(IP):
+            payload = bytes(packet[TCP].payload).decode(errors="ignore")
+            for patron in patrones_sql + patrones_xss:
+                if patron in payload:
+                    print(f"[ALERTA] Posible amenaza detectada: {patron} en {packet[IP].src} -> {packet[IP].dst}")
+                    ALERTS.append(f"Amenaza detectada: {patron} en {datetime.now()}")
+
+    sniff(filter="tcp", prn=packet_callback, store=0)
     
     
     
@@ -94,7 +110,13 @@ def menu(): #alonso
     print("1. Monitorear red\n")
     print("2. Analisis de registros \n")
     print("3. Detectar Vulnerabilidades\n" )
-    print("4. Salir\n")
+    print("4. Prevención de ataques\n" )
+    print("5. Análisis de tráfico web\n" )
+    print("6. Alertas y notificaciones\n" )
+    print("7. Registro de incidentes\n" )
+    print("8. Informes de seguridad\n" )
+    print("9. Salir\n" )
+   
 
 def main():
     while True:
@@ -112,9 +134,29 @@ def main():
                                                                                                                                                          
             elif opcion == 3:
 
-                print()                                                               
+                print()
 
             elif opcion == 4:
+
+                print()
+
+            elif opcion == 5:
+                analisis_de_trafico_web()
+                print()      
+
+            elif opcion == 6:
+
+                print()
+
+            elif opcion == 7:
+
+                print()
+
+            elif opcion == 8:
+
+                print()                                                        
+
+            elif opcion == 9:
                 print("Cerrando programa!")
                 break
             else: 
