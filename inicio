@@ -1,9 +1,9 @@
-
 import re
 import datetime
 from fpdf import FPDF
 import json
 import subprocess
+from scapy.all import sniff, IP, TCP
 
 
 
@@ -74,35 +74,32 @@ def analisis_de_registros():
     except Exception as e:
         print(f"An error occurred: {e}")
     
+def ejecutar_bandit():
+    result = subprocess.run(["bandit", "-r", "."], capture_output=True, text=True)
+    return result
+
+def ejecutar_safety():
+    result = subprocess.run(["safety", "check"], capture_output=True, text=True)
+    return result
+
 def deteccion_de_vulnerabilidades():  #marco
-    print("Detección de vulnerabilidades en progreso...")
-
+    bandit_result = None
+    safety_result = None
     try:
-        # Ejecutar bandit para analizar el código en busca de vulnerabilidades
-        
-        bandit_result = subprocess.run(['bandit', '-r', '.'], capture_output=True, text=True, check=True)
-        print("Resultados de Bandit:")
-        print(bandit_result.stdout)
-        
-        # Ejecutar safety para verificar las dependencias en busca de versiones vulnerables
-        safety_result = subprocess.run(['safety', 'check'], capture_output=True, text=True, check=True)
-        print("Resultados de Safety:")
-        print(safety_result.stdout)
-        
-    except subprocess.CalledProcessError as e:
-        print("Error al ejecutar Safety:")
-        print(e.stderr)
-        
-    except subprocess.CalledProcessError as e:
-        print("Error al ejecutar Bandit:")
-        print(e.stderr)
-        
-    except FileNotFoundError:
-        print("Error: Bandit no está instalado o no se encuentra en el PATH.")
-    
+        bandit_result = ejecutar_bandit()
     except Exception as e:
-        print(f"Se produjo un error inesperado: {e}")
-
+        print(f"Error al ejecutar Bandit: {e}")
+    
+    try:
+        safety_result = ejecutar_safety()
+    except Exception as e:
+        print(f"Error al ejecutar Safety: {e}")
+    
+    if bandit_result and safety_result:
+        print("Detección de vulnerabilidades completada con éxito.")
+    else:
+        print("Hubo errores en la detección de vulnerabilidades.")
+    
     # Guardar los resultados en un archivo
     # none   
     if bandit_result and safety_result: 
@@ -201,6 +198,7 @@ def Prevencion_de_ataques():#alonso
                     break
                 
                 # para moestrar las deteccion
+                
         for tipo, alertas in detecciones.items():# se recorre los datos guardados 
             
            #print(f"Detecciones de {tipo}:")# imprime las detecciones de tipo
@@ -297,6 +295,7 @@ def registrar_incidente(incidentes):
     
     print("Incidente registrado exitosamente.")
     
+    pass
     
 def generar_informe_seguridad(incidentes, formato='PDF'):   #marco
     if formato == 'PDF':
@@ -344,6 +343,7 @@ def menu(): #alonso
    
 
 def main():
+    incidentes = [] 
     while True:
         menu()
         try:
@@ -375,11 +375,11 @@ def main():
                 print()
 
             elif opcion == 7:
-                registrar_incidente()
+                registrar_incidente(incidentes)
                 print()
 
             elif opcion == 8:
-                generar_informe_seguridad()
+                generar_informe_seguridad(incidentes)
                 print()                                                        
 
             elif opcion == 9:
