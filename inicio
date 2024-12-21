@@ -1,5 +1,3 @@
-
-
 import re
 import datetime
 from fpdf import FPDF
@@ -7,43 +5,73 @@ import json
 import subprocess
 
 
-def monitoreo_de_red():  # mauricio
-    print("Bienvenido al modulo para monitorear la red.")
+
+
+def monitoreo_de_red():  # Mauricio
+    print("Bienvenido al módulo para monitorear la red.")
+    print("Monitoreando tráfico de red...")
+    def packet_callback(packet):
+        if packet.haslayer(IP):
+            ip_src = packet[IP].src
+            ip_dst = packet[IP].dst
+            if packet.haslayer(TCP):
+                print(f"¡Peligro! Tráfico TCP sospechoso: {ip_src} -> {ip_dst}")
+    sniff(filter="tcp", prn=packet_callback, store=0)
     
 
     
-def analisis_de_registros(registro_sistema): #alonso
-    
-    
+def analisis_de_registros():
     print("----------------------------analizando eventos del sistema -----------------------------")
     
-        # Desarrolla scripts en PY que analicen los registros del sistema en busca de eventos 
+    # Desarrolla scripts en PY que analicen los registros del sistema en busca de eventos 
     # anomalos o patrones de comportamiento sospechoso que puedan un ataque en curso
     
-    with open(registro_sistema, "r") as file:
-        # se abre el archivo a analizar, en este caso el de logs
-        registros = file.readlines()
-        # exprexiones regulares a buscar
-        expreciones_reg = [
-            #tener en cuenta el idioma del sistema, en mi caso esta en espanol
-            
-            r"Contrasena fallida", 
-            
-            
-            
-        ]
+    registro_sistema = "archivosistema.txt"
+    #r"C:\Users\USER1\Desktop\Laboratorio-Practico-1\archivosistema.txt"
+                            #"archivosistema.txt"
+                        #r"C:\Windows\System32\winevt\Logs\System.evtx"
+    sospechos = []  # Almacena lo que se encuentra
+                # Expresiones regulares a buscar
+    expresiones_reg = [
         
-        patrones = [re.compile(expreciones, re.IGNORECASE) for expreciones in expreciones_reg]# se compilan las expreciones regulares, para su busqueda
+        r"Contrasena fallida",  
+        r"Inicio de sesión exitoso",
+        r"Error del sistema",
+        r"Acceso denegado",
+        r"Reinicio del sistema",
+        r"Advertencia de seguridad",
+        r"Evento crítico",
         
-        sospechos = []# almacena lo que se encuentra
-        for linea_texto in registros:
-            for patron in patrones:# se analiza el documentos en busca 
-                if patron.search(linea_texto):# de las palabras claves
-                    sospechos.append(linea_texto)## guarda 
-                    break
-        return sospechos# retorna
+        
+    ]
+        # Se compilan las expresiones regulares para su búsqueda
+    patrones = [re.compile(expresion, re.IGNORECASE) for expresion in expresiones_reg]
     
+    try:
+        # Abre el archivo a analizar, en este caso el de logs, con codificación utf-8
+        with open(registro_sistema, "r", encoding="utf-8", errors="ignore") as file:
+            registros = file.readlines()
+                       
+            # Se analiza el documento en busca de las palabras clave
+            for linea_texto in registros:
+                for patron in patrones:
+                    if patron.search(linea_texto):
+                        sospechos.append(linea_texto)  # Guarda la línea sospechosa
+                        #print(f"Evento sospechoso encontrado: {linea_texto}")
+                        break
+        
+        # Imprime los eventos sospechosos
+        for eventos in sospechos:
+            print(eventos)
+        else:
+            print("No se encontraron eventos sospechosos.")
+        
+        return sospechos
     
+    except PermissionError as e:
+        print(f"PermissionError: {e}")
+    except Exception as e:
+        print(f"An error occurred: {e}")
     
 def deteccion_de_vulnerabilidades():  #marco
     print("Detección de vulnerabilidades en progreso...")
@@ -77,19 +105,168 @@ deteccion_de_vulnerabilidades()
     
     
 def Prevencion_de_ataques():#alonso
-    print()
+    print("--------Prevencion ataques--------------")
+    
+    # Almacenamiento de alertas
+    ALERTS = []
+    # datos a examinar
+    datos = [
+    
+    "GET /index.php?id=1' OR '1'='1 HTTP/1.1",
+    "POST /login HTTP/1.1\\nusername=admin&password=wrongpassword",
+    "GET /index.php?name=<script>alert('XSS')</script> HTTP/1.1",
+    "Failed login attempt for user admin from IP 192.168.0.1"
+    
+]
+    
+    # almacenar detecciones
+    detecciones = {
+    
+    "inyecciones_SQL":  [],
+    "xss":[],
+    'Fuerza Bruta': []
+    
+}
+    
     
     #desarrolla un modulo en PY que analice el trafico web entrante y saliente 
     #para detectar posibles amenazas, como inyecciones SQL, XSS, o ataques de fuerza bruta
+    
+    Patrones_SQL = [
+        
+        re.compile(r"(\\%27)|(\\')|(\\-\\-)|(\\%23)|(#)", re.IGNORECASE), #caracteres comunes en inyeccion SQL
+        re.compile(r"((\\%3D)|(=))[^\\n]*((\\%27)|(\\')|(\\-\\-)|(\\%3B)|(;))"),  #buscar signo igual, caracter que no sea salto de linea y caracteres comunes
+        re.compile(r"((\\%27)|(\\'))union", re.IGNORECASE),#uso de union en consulta, combinacion comun para combinacion de resultados
+        re.compile(r"((\\%27)|(\\'))\s*((\\%6F)|o|(\%4F))\s*((\\%72)|r|(\%52))", re.IGNORECASE),# manipular logica de consulta, "or"
+        
+    ]
+    
+    Patrones_xxs = [
+        
+        # deteccion patrones
+        re.compile(r"javascript:", re.IGNORECASE),# uso esquema javascript, para poder utilizar codigo javascript malicioso.
+        re.compile(r"vbscript:", re.IGNORECASE), # esquema vbscript.
+        re.compile(r"onload(.*?)=", re.IGNORECASE) 
+        
+    ]
+    
+    Patrones_FB = [
+        
+        re.compile(r"Failed login attempt for user (.*?) from IP (.*?)", re.IGNORECASE),# inicio sesion fallido
+        re.compile(r"Login attempt for user (.*?) from IP (.*?)", re.IGNORECASE),# inteto de iniciar sesion
+        re.compile(r"Login attempt with password (password|123456|admin|letmein)", re.IGNORECASE), # contrasenas comunes
+        re.compile(r"Login attempt for user (.*?) from IP (.*?)", re.IGNORECASE)
+        
+    ]
+    
+    #variables para guardar detecciones
+    
 
-def analisis_de_trafico_web():#mauricio
-    print()
-    patrones_sql = []
+    
+    try:
+        
+        for trafico in datos:
+            
+            # se busca en el trafico los patrones de inyeccion SQL
+            for patron in Patrones_FB:
+                # si el se detectan los patrones 
+                if patron.search(trafico):
+                    detecciones["Fuerza Bruta"].append(trafico)# se alamacena
+                    break
+            
+                                 
+            for patron in Patrones_SQL:
+                
+                
+                if patron.search(trafico):
+                    detecciones["inyecciones_SQL"].append(trafico)
+                    break
+
+                
+            for patron in Patrones_xxs:
+                
+                if patron.search(trafico):
+                    detecciones["xss"].append(trafico)
+                    break
+                
+                # para moestrar las deteccion
+        for tipo, alertas in detecciones.items():# se recorre los datos guardados 
+            
+           #print(f"Detecciones de {tipo}:")# imprime las detecciones de tipo
+            for alerta in alertas: # 
+                print(f"  - {alerta}")# imprime las alertas que se encontrar en los datos proporcionados
+
+                
+        return detecciones
+        
+    
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+
+    
+
+
+
+
+def analisis_de_trafico_web(): 
+    """Analiza el tráfico web entrante y saliente en busca de amenazas como SQLi y XSS."""
+    print("[INFO] Analizando tráfico web para detectar amenazas...")
+    patrones_sql = ["SELECT", "DROP", "INSERT", "UPDATE", "DELETE"]
+    patrones_xss = ["<script>", "javascript:", "onerror"]
+
+    def packet_callback(packet):
+        if packet.haslayer(TCP) and packet.haslayer(IP):
+            payload = bytes(packet[TCP].payload).decode(errors="ignore")
+            for patron in patrones_sql + patrones_xss:
+                if patron in payload:
+                    print(f"[ALERTA] Posible amenaza detectada: {patron} en {packet[IP].src} -> {packet[IP].dst}")
+                    ALERTS.append(f"Amenaza detectada: {patron} en {datetime.now()}")
+
+    sniff(filter="tcp", prn=packet_callback, store=0)
     
     
+    #Alertas y notificaciones, Mauricio
     
-def alertas(): # mauricio
-    print()
+# Configuración de correo
+SMTP_SERVER = "smtp.gmail.com"
+SMTP_PORT = 587
+EMAIL_ADDRESS = "mausava2@gmail.com"  # Reemplazar con tu correo
+EMAIL_PASSWORD = "######"       # Reemplazar con tu contraseña
+
+ALERTS = []
+
+def enviar_alerta_por_correo():
+    """
+    Envía un correo electrónico con las alertas detectadas durante el análisis de tráfico web.
+    """
+    if not ALERTS:
+        print("[INFO] No se encontraron alertas para enviar.")
+        return
+
+    try:
+        asunto = "Alertas de seguridad detectadas"
+        cuerpo = "Se detectaron las siguientes alertas durante el análisis de tráfico web:\n\n" + "\n".join(ALERTS)
+
+        msg = MIMEMultipart()
+        msg['From'] = EMAIL_ADDRESS
+        msg['To'] = EMAIL_ADDRESS
+        msg['Subject'] = asunto
+
+        msg.attach(MIMEText(cuerpo, 'plain'))
+
+        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+        server.starttls()
+        server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+        server.sendmail(EMAIL_ADDRESS, EMAIL_ADDRESS, msg.as_string())
+        server.quit()
+
+        print(f"[INFO] Alerta enviada por correo: {asunto}")
+    except Exception as e:
+        print(f"[ERROR] No se pudo enviar el correo: {e}")
+
+
+
     
     
 def registrar_incidente(incidentes, tipo, acciones):  #marco
@@ -140,7 +317,13 @@ def menu(): #alonso
     print("1. Monitorear red\n")
     print("2. Analisis de registros \n")
     print("3. Detectar Vulnerabilidades\n" )
-    print("4. Salir\n")
+    print("4. Prevención de ataques\n" )
+    print("5. Análisis de tráfico web\n" )
+    print("6. Alertas y notificaciones\n" )
+    print("7. Registro de incidentes\n" )
+    print("8. Informes de seguridad\n" )
+    print("9. Salir\n" )
+   
 
 def main():
     while True:
@@ -149,18 +332,39 @@ def main():
             opcion = int(input("Cual seria su seleccion?\n"))
 
             if opcion == 1:
-
-                print()                                                         
+              monitoreo_de_red()
+              print()                                                         
                                                                                                 
             elif opcion == 2:
-
+                analisis_de_registros()
                 print()                                                
                                                                                                                                                          
             elif opcion == 3:
 
-                print()                                                               
+                print()
 
             elif opcion == 4:
+                
+                Prevencion_de_ataques()
+                print()
+
+            elif opcion == 5:
+                analisis_de_trafico_web()
+                print()      
+
+            elif opcion == 6:
+                enviar_alerta_por_correo()
+                print()
+
+            elif opcion == 7:
+
+                print()
+
+            elif opcion == 8:
+
+                print()                                                        
+
+            elif opcion == 9:
                 print("Cerrando programa!")
                 break
             else: 
