@@ -11,6 +11,9 @@ from datetime import datetime
 from cryptography.fernet import Fernet
 import psutil
 import logging
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 
 
@@ -71,10 +74,11 @@ def Prevencion_de_ataques():#alonso
     #para detectar posibles amenazas, como inyecciones SQL, XSS, o ataques de fuerza bruta
 
 
+    #Análisis de tráfico web, Mauricio
 # Almacenamiento de alertas
 ALERTS = []
 
-def analisis_de_trafico_web(): #Mauricio
+def analisis_de_trafico_web(): 
     """Analiza el tráfico web entrante y saliente en busca de amenazas como SQLi y XSS."""
     print("[INFO] Analizando tráfico web para detectar amenazas...")
     patrones_sql = ["SELECT", "DROP", "INSERT", "UPDATE", "DELETE"]
@@ -91,9 +95,47 @@ def analisis_de_trafico_web(): #Mauricio
     sniff(filter="tcp", prn=packet_callback, store=0)
     
     
+    #Alertas y notificaciones, Mauricio
     
-def alertas(): # mauricio
-    print()
+# Configuración de correo
+SMTP_SERVER = "smtp.gmail.com"
+SMTP_PORT = 587
+EMAIL_ADDRESS = "mausava2@gmail.com"  # Reemplazar con tu correo
+EMAIL_PASSWORD = "######"       # Reemplazar con tu contraseña
+
+ALERTS = []
+
+def enviar_alerta_por_correo():
+    """
+    Envía un correo electrónico con las alertas detectadas durante el análisis de tráfico web.
+    """
+    if not ALERTS:
+        print("[INFO] No se encontraron alertas para enviar.")
+        return
+
+    try:
+        asunto = "Alertas de seguridad detectadas"
+        cuerpo = "Se detectaron las siguientes alertas durante el análisis de tráfico web:\n\n" + "\n".join(ALERTS)
+
+        msg = MIMEMultipart()
+        msg['From'] = EMAIL_ADDRESS
+        msg['To'] = EMAIL_ADDRESS
+        msg['Subject'] = asunto
+
+        msg.attach(MIMEText(cuerpo, 'plain'))
+
+        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+        server.starttls()
+        server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+        server.sendmail(EMAIL_ADDRESS, EMAIL_ADDRESS, msg.as_string())
+        server.quit()
+
+        print(f"[INFO] Alerta enviada por correo: {asunto}")
+    except Exception as e:
+        print(f"[ERROR] No se pudo enviar el correo: {e}")
+
+
+
     
     
 def Registro_incidentes(): #marco
@@ -145,7 +187,7 @@ def main():
                 print()      
 
             elif opcion == 6:
-
+                enviar_alerta_por_correo()
                 print()
 
             elif opcion == 7:
