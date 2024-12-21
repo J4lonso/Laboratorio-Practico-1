@@ -1,10 +1,9 @@
-
-
 import re
 import datetime
 from fpdf import FPDF
 import json
 import subprocess
+
 
 
 def monitoreo_de_red():  # mauricio
@@ -45,35 +44,9 @@ def analisis_de_registros(registro_sistema): #alonso
     
     
     
-def deteccion_de_vulnerabilidades():  #marco
-    print("Detección de vulnerabilidades en progreso...")
-
-    try:
-        # Ejecutar bandit para analizar el código en busca de vulnerabilidades
-        bandit_result = subprocess.run(['bandit', '-r', '.'], capture_output=True, text=True, check=True)
-        print("Resultados de Bandit:")
-        print(bandit_result.stdout)
-    except subprocess.CalledProcessError as e:
-        print("Error al ejecutar Bandit:")
-        print(e.stderr)
-
-    try:
-        # Ejecutar safety para verificar las dependencias en busca de versiones vulnerables
-        safety_result = subprocess.run(['safety', 'check'], capture_output=True, text=True, check=True)
-        print("Resultados de Safety:")
-        print(safety_result.stdout)
-    except subprocess.CalledProcessError as e:
-        print("Error al ejecutar Safety:")
-        print(e.stderr)
-
-    # Guardar los resultados en un archivo
-    with open("resultados_vulnerabilidades.txt", "w") as file:
-        file.write("Resultados de Bandit:\n")
-        file.write(bandit_result.stdout)
-        file.write("\nResultados de Safety:\n")
-        file.write(safety_result.stdout)
-
-deteccion_de_vulnerabilidades()
+def Deteccion_de_vulnerabilidades():# marco
+    adsd = 0
+    print()
     
     
 def Prevencion_de_ataques():#alonso
@@ -87,23 +60,7 @@ def analisis_de_trafico_web():#mauricio
     patrones_sql = []
     
     
-    
-def alertas(): # mauricio
-    print()
-    
-    
-def registrar_incidente(incidentes, tipo, acciones):  #marco
-    incidente = {
-        'fecha': str(datetime.datetime.now()),
-        'tipo': tipo,
-        'acciones': acciones
-    }
-    incidentes.append(incidente)
-    with open("incidentes.json", "w") as file:
-        json.dump(incidentes, file)
-    
-    
-def generar_informe_seguridad(incidentes, formato='PDF'):   #marco
+def generar_informe_seguridad(incidentes, formato='PDF'):
     if formato == 'PDF':
         pdf = FPDF()
         pdf.add_page()
@@ -133,6 +90,57 @@ def generar_informe_seguridad(incidentes, formato='PDF'):   #marco
             
             file.write("</body></html>")
 
+def registrar_incidente(incidentes, tipo, acciones):
+    incidente = {
+        'fecha': str(datetime.datetime.now()),
+        'tipo': tipo,
+        'acciones': acciones
+    }
+    incidentes.append(incidente)
+    with open("incidentes.json", "w") as file:
+        json.dump(incidentes, file)
+
+def deteccion_de_vulnerabilidades():
+    print("Detección de vulnerabilidades en progreso...")
+
+    try:
+        # Ejecutar bandit para analizar el código en busca de vulnerabilidades
+        bandit_result = subprocess.run(['bandit', '-r', '.'], capture_output=True, text=True, check=True)
+        print("Resultados de Bandit:")
+        print(bandit_result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error al ejecutar Bandit:")
+        print(e.stderr)
+
+    try:
+        # Ejecutar safety para verificar las dependencias en busca de versiones vulnerables
+        safety_result = subprocess.run(['safety', 'check'], capture_output=True, text=True, check=True)
+        print("Resultados de Safety:")
+        print(safety_result.stdout)
+    except subprocess.CalledProcessError as e:
+        print("Error al ejecutar Safety:")
+        print(e.stderr)
+
+    # Guardar los resultados en un archivo
+    with open("resultados_vulnerabilidades.txt", "w") as file:
+        file.write("Resultados de Bandit:\n")
+        file.write(bandit_result.stdout)
+        file.write("\nResultados de Safety:\n")
+        file.write(safety_result.stdout)
+
+deteccion_de_vulnerabilidades()
+
+def alertas(): # mauricio
+    print()
+    
+    
+def Registro_incidentes(): #marco
+    print()
+    
+    
+def Informes_seguridad(): #marco
+    print()
+
 
 
 def menu(): #alonso
@@ -151,11 +159,11 @@ def main():
             if opcion == 1:
 
                 print()                                                         
-                                                                                                
+                                                                                                 
             elif opcion == 2:
 
-                print()                                                
-                                                                                                                                                         
+                print()                                                 
+                                                                                                                                                          
             elif opcion == 3:
 
                 print()                                                               
@@ -173,5 +181,5 @@ def main():
     
 
 
-if __name__== "__main__":
+if name== "main":
     main()
