@@ -79,6 +79,7 @@ def deteccion_de_vulnerabilidades():  #marco
 
     try:
         # Ejecutar bandit para analizar el código en busca de vulnerabilidades
+        
         bandit_result = subprocess.run(['bandit', '-r', '.'], capture_output=True, text=True, check=True)
         print("Resultados de Bandit:")
         print(bandit_result.stdout)
@@ -95,13 +96,21 @@ def deteccion_de_vulnerabilidades():  #marco
     except subprocess.CalledProcessError as e:
         print("Error al ejecutar Bandit:")
         print(e.stderr)
+        
+    except FileNotFoundError:
+        print("Error: Bandit no está instalado o no se encuentra en el PATH.")
+    
+    except Exception as e:
+        print(f"Se produjo un error inesperado: {e}")
 
     # Guardar los resultados en un archivo
-    with open("resultados_vulnerabilidades.txt", "w") as file:
-        file.write("Resultados de Bandit:\n")
-        file.write(bandit_result.stdout)
-        file.write("\nResultados de Safety:\n")
-        file.write(safety_result.stdout)
+    # none   
+    if bandit_result and safety_result: 
+        with open("resultados_vulnerabilidades.txt", "w") as file:
+            file.write("Resultados de Bandit:\n")
+            file.write(bandit_result.stdout)
+            file.write("\nResultados de Safety:\n")
+            file.write(safety_result.stdout)
 
 
     
@@ -342,7 +351,7 @@ def main():
                 print()                                                
                                                                                                                                                          
             elif opcion == 3:
-
+                deteccion_de_vulnerabilidades()
                 print()
 
             elif opcion == 4:
@@ -359,11 +368,11 @@ def main():
                 print()
 
             elif opcion == 7:
-
+                registrar_incidente()
                 print()
 
             elif opcion == 8:
-
+                generar_informe_seguridad()
                 print()                                                        
 
             elif opcion == 9:
