@@ -1,3 +1,4 @@
+
 import re
 import datetime
 from fpdf import FPDF
@@ -81,17 +82,18 @@ def deteccion_de_vulnerabilidades():  #marco
         bandit_result = subprocess.run(['bandit', '-r', '.'], capture_output=True, text=True, check=True)
         print("Resultados de Bandit:")
         print(bandit_result.stdout)
-    except subprocess.CalledProcessError as e:
-        print("Error al ejecutar Bandit:")
-        print(e.stderr)
-
-    try:
+        
         # Ejecutar safety para verificar las dependencias en busca de versiones vulnerables
         safety_result = subprocess.run(['safety', 'check'], capture_output=True, text=True, check=True)
         print("Resultados de Safety:")
         print(safety_result.stdout)
+        
     except subprocess.CalledProcessError as e:
         print("Error al ejecutar Safety:")
+        print(e.stderr)
+        
+    except subprocess.CalledProcessError as e:
+        print("Error al ejecutar Bandit:")
         print(e.stderr)
 
     # Guardar los resultados en un archivo
@@ -101,7 +103,7 @@ def deteccion_de_vulnerabilidades():  #marco
         file.write("\nResultados de Safety:\n")
         file.write(safety_result.stdout)
 
-deteccion_de_vulnerabilidades()
+
     
     
 def Prevencion_de_ataques():#alonso
