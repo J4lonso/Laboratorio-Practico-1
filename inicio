@@ -92,6 +92,7 @@ def Prevencion_de_ataques():#alonso
     
     # Almacenamiento de alertas
     ALERTS = []
+    # datos a examinar
     datos = [
     
     "GET /index.php?id=1' OR '1'='1 HTTP/1.1",
@@ -101,7 +102,7 @@ def Prevencion_de_ataques():#alonso
     
 ]
     
-    
+    # almacenar detecciones
     detecciones = {
     
     "inyecciones_SQL":  [],
@@ -116,27 +117,27 @@ def Prevencion_de_ataques():#alonso
     
     Patrones_SQL = [
         
-        re.compile(r"(\\%27)|(\\')|(\\-\\-)|(\\%23)|(#)", re.IGNORECASE),
-        re.compile(r"((\\%3D)|(=))[^\\n]*((\\%27)|(\\')|(\\-\\-)|(\\%3B)|(;))"), 
-        re.compile(r"((\\%27)|(\\'))union", re.IGNORECASE),
-        re.compile(r"((\\%27)|(\\'))\s*((\\%6F)|o|(\%4F))\s*((\\%72)|r|(\%52))", re.IGNORECASE),
+        re.compile(r"(\\%27)|(\\')|(\\-\\-)|(\\%23)|(#)", re.IGNORECASE), #caracteres comunes en inyeccion SQL
+        re.compile(r"((\\%3D)|(=))[^\\n]*((\\%27)|(\\')|(\\-\\-)|(\\%3B)|(;))"),  #buscar signo igual, caracter que no sea salto de linea y caracteres comunes
+        re.compile(r"((\\%27)|(\\'))union", re.IGNORECASE),#uso de union en consulta, combinacion comun para combinacion de resultados
+        re.compile(r"((\\%27)|(\\'))\s*((\\%6F)|o|(\%4F))\s*((\\%72)|r|(\%52))", re.IGNORECASE),# manipular logica de consulta, "or"
         
     ]
     
     Patrones_xxs = [
         
-        
-        re.compile(r"javascript:", re.IGNORECASE),
-        re.compile(r"vbscript:", re.IGNORECASE),
-        re.compile(r"onload(.*?)=", re.IGNORECASE)
+        # deteccion patrones
+        re.compile(r"javascript:", re.IGNORECASE),# uso esquema javascript, para poder utilizar codigo javascript malicioso.
+        re.compile(r"vbscript:", re.IGNORECASE), # esquema vbscript.
+        re.compile(r"onload(.*?)=", re.IGNORECASE) 
         
     ]
     
     Patrones_FB = [
         
-        re.compile(r"Failed login attempt for user (.*?) from IP (.*?)", re.IGNORECASE),
-        re.compile(r"Login attempt for user (.*?) from IP (.*?)", re.IGNORECASE),
-        re.compile(r"Login attempt with password (password|123456|admin|letmein)", re.IGNORECASE),
+        re.compile(r"Failed login attempt for user (.*?) from IP (.*?)", re.IGNORECASE),# inicio sesion fallido
+        re.compile(r"Login attempt for user (.*?) from IP (.*?)", re.IGNORECASE),# inteto de iniciar sesion
+        re.compile(r"Login attempt with password (password|123456|admin|letmein)", re.IGNORECASE), # contrasenas comunes
         re.compile(r"Login attempt for user (.*?) from IP (.*?)", re.IGNORECASE)
         
     ]
@@ -149,11 +150,11 @@ def Prevencion_de_ataques():#alonso
         
         for trafico in datos:
             
-            
+            # se busca en el trafico los patrones de inyeccion SQL
             for patron in Patrones_FB:
-                
+                # si el se detectan los patrones 
                 if patron.search(trafico):
-                    detecciones["Fuerza Bruta"].append(trafico)
+                    detecciones["Fuerza Bruta"].append(trafico)# se alamacena
                     break
             
                                  
@@ -171,12 +172,12 @@ def Prevencion_de_ataques():#alonso
                     detecciones["xss"].append(trafico)
                     break
                 
-                
-        for tipo, alertas in detecciones.items():
+                # para moestrar las deteccion
+        for tipo, alertas in detecciones.items():# se recorre los datos guardados 
             
-            print(f"Detecciones de {tipo}:")
-            for alerta in alertas:
-                print(f"  - {alerta}")
+           #print(f"Detecciones de {tipo}:")# imprime las detecciones de tipo
+            for alerta in alertas: # 
+                print(f"  - {alerta}")# imprime las alertas que se encontrar en los datos proporcionados
 
                 
         return detecciones
@@ -185,7 +186,7 @@ def Prevencion_de_ataques():#alonso
     except Exception as e:
         print(f"An error occurred: {e}")
 
-    print (detecciones)
+
     
 
 
