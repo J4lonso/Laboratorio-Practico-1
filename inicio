@@ -280,15 +280,22 @@ def enviar_alerta_por_correo():
 
     
     
-def registrar_incidente(incidentes, tipo, acciones):  #marco
+def registrar_incidente(incidentes):
+    tipo = input("Ingrese el tipo de ataque: ")
+    acciones = input("Ingrese las acciones tomadas: ")
+    
     incidente = {
         'fecha': str(datetime.datetime.now()),
         'tipo': tipo,
         'acciones': acciones
     }
+    
     incidentes.append(incidente)
+    
     with open("incidentes.json", "w") as file:
         json.dump(incidentes, file)
+    
+    print("Incidente registrado exitosamente.")
     
     
 def generar_informe_seguridad(incidentes, formato='PDF'):   #marco
