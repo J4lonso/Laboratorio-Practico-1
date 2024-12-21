@@ -11,6 +11,9 @@ from datetime import datetime
 from cryptography.fernet import Fernet
 import psutil
 import logging
+import win32evtlog
+
+
 
 
 
@@ -27,52 +30,145 @@ def monitoreo_de_red():  # Mauricio
     
 
     
-def analisis_de_registros(registro_sistema): #alonso
-    
-    
+def analisis_de_registros():
     print("----------------------------analizando eventos del sistema -----------------------------")
     
-        # Desarrolla scripts en PY que analicen los registros del sistema en busca de eventos 
+    # Desarrolla scripts en PY que analicen los registros del sistema en busca de eventos 
     # anomalos o patrones de comportamiento sospechoso que puedan un ataque en curso
     
-    with open(registro_sistema, "r") as file:
-        # se abre el archivo a analizar, en este caso el de logs
-        registros = file.readlines()
-        # exprexiones regulares a buscar
-        expreciones_reg = [
-            #tener en cuenta el idioma del sistema, en mi caso esta en espanolss
-            
-            r"Contrasena fallida", 
-            
-            
-            
-        ]
+    registro_sistema = "archivosistema.txt"
+    #r"C:\Users\USER1\Desktop\Laboratorio-Practico-1\archivosistema.txt"
+                            #"archivosistema.txt"
+                        #r"C:\Windows\System32\winevt\Logs\System.evtx"
+    sospechos = []  # Almacena lo que se encuentra
+                # Expresiones regulares a buscar
+    expresiones_reg = [
         
-        patrones = [re.compile(expreciones, re.IGNORECASE) for expreciones in expreciones_reg]# se compilan las expreciones regulares, para su busqueda
+        r"Contrasena fallida",  
+        r"Inicio de sesión exitoso",
+        r"Error del sistema",
+        r"Acceso denegado",
+        r"Reinicio del sistema",
+        r"Advertencia de seguridad",
+        r"Evento crítico",
         
-        sospechos = []# almacena lo que se encuentra
-        for linea_texto in registros:
-            for patron in patrones:# se analiza el documentos en busca 
-                if patron.search(linea_texto):# de las palabras claves
-                    sospechos.append(linea_texto)## guarda 
-                    break
-        return sospechos# retorna
+        
+    ]
+        # Se compilan las expresiones regulares para su búsqueda
+    patrones = [re.compile(expresion, re.IGNORECASE) for expresion in expresiones_reg]
     
+    try:
+        # Abre el archivo a analizar, en este caso el de logs, con codificación utf-8
+        with open(registro_sistema, "r", encoding="utf-8", errors="ignore") as file:
+            registros = file.readlines()
+                       
+            # Se analiza el documento en busca de las palabras clave
+            for linea_texto in registros:
+                for patron in patrones:
+                    if patron.search(linea_texto):
+                        sospechos.append(linea_texto)  # Guarda la línea sospechosa
+                        #print(f"Evento sospechoso encontrado: {linea_texto}")
+                        break
+        
+        # Imprime los eventos sospechosos
+        for eventos in sospechos:
+            print(eventos)
+        else:
+            print("No se encontraron eventos sospechosos.")
+        
+        return sospechos
     
+    except PermissionError as e:
+        print(f"PermissionError: {e}")
+    except Exception as e:
+        print(f"An error occurred: {e}")
     
 def Deteccion_de_vulnerabilidades():# marco
     print()
     
     
 def Prevencion_de_ataques():#alonso
-    print()
+    print("--------Prevencion ataques--------------")
+    
+    # Almacenamiento de alertas
+    ALERTS = []
+    datos = [
+    
+    "GET /index.php?id=1' OR '1'='1 HTTP/1.1",
+    "POST /login HTTP/1.1\\nusername=admin&password=wrongpassword",
+    "GET /index.php?name=<script>alert('XSS')</script> HTTP/1.1",
+    "Failed login attempt for user admin from IP 192.168.0.1"
+    
+]
+    
+    
+    detecciones = {
+    
+    "inyecciones_SQL":  [],
+    "xss":[],
+    'Fuerza Bruta': []
+    
+}
+    
     
     #desarrolla un modulo en PY que analice el trafico web entrante y saliente 
     #para detectar posibles amenazas, como inyecciones SQL, XSS, o ataques de fuerza bruta
+    
+    Patrones_SQL = [
+        
+        re.compile(r"(\\%27)|(\\')|(\\-\\-)|(\\%23)|(#)", re.IGNORECASE),
+        re.compile(r"((\\%3D)|(=))[^\\n]*((\\%27)|(\\')|(\\-\\-)|(\\%3B)|(;))"), 
+        re.compile(r"((\\%27)|(\\'))union", re.IGNORECASE)
+        r"SELECT * FROM `contacts` WHERE `phone` REGEXP '^[2-9][0-9]{2}-[2-9][0-9]{2}-[0-9]{4}$';"
+        r"SELECT * FROM `personas` WHERE `nombre` REGEXP '^A';"
+        r"SELECT * FROM `personas` WHERE `nombre` REGEXP '^.{2}a';"
+        
+    ]
+    
+    Patrones_xxs = [
+        
+        
+        re.compile(r"javascript:", re.IGNORECASE),
+        re.compile(r"vbscript:", re.IGNORECASE),
+        re.compile(r"onload(.*?)=", re.IGNORECASE)
+        
+    ]
+    
+    Patrones_FB = [
+        
+        re.compile(r"Failed login attempt for user (.*?) from IP (.*?)", re.IGNORECASE),
+        re.compile(r"Login attempt for user (.*?) from IP (.*?)", re.IGNORECASE),
+        re.compile(r"Login attempt with password (password|123456|admin|letmein)", re.IGNORECASE),
+        re.compile(r"Login attempt for user (.*?) from IP (.*?)", re.IGNORECASE)
+        
+    ]
+    
+    #variables para guardar detecciones
+    
+
+    
+    try:
+        
+        for trafico in datos:
+            
+            
+            for patron in Patrones_FB:
+                
+                if patron.search(trafico):
+                    detecciones["Fuerza Bruta"].append(trafico)
+                    break
+                
+                
+        return detecciones
+    
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 
-# Almacenamiento de alertas
-ALERTS = []
+    
+
+
+
 
 def analisis_de_trafico_web(): #Mauricio
     """Analiza el tráfico web entrante y saliente en busca de amenazas como SQLi y XSS."""
@@ -129,7 +225,7 @@ def main():
               print()                                                         
                                                                                                 
             elif opcion == 2:
-
+                analisis_de_registros()
                 print()                                                
                                                                                                                                                          
             elif opcion == 3:
@@ -137,7 +233,8 @@ def main():
                 print()
 
             elif opcion == 4:
-
+                
+                Prevencion_de_ataques()
                 print()
 
             elif opcion == 5:
