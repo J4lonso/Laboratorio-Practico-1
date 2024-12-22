@@ -1,0 +1,8 @@
+Contrasena falllida
+Contrasena fallida para el usuario admin
+Inicio de sesión exitoso para el usuario admin
+Error del sistema: no se pudo iniciar el servicio
+Acceso denegado al recurso /admin
+Reinicio del sistema programado para las 3:00 AM
+Advertencia de seguridad: intento de acceso no autorizado
+Evento crítico: fallo en el disco duro
